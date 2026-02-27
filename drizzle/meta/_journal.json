@@ -8,6 +8,13 @@
       "when": 1770893345623,
       "tag": "0000_peaceful_earthquake",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1772209663805,
+      "tag": "0001_colorful_mantis",
+      "breakpoints": true
     }
   ]
 }
