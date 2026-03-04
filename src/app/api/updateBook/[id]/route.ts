@@ -5,12 +5,14 @@ import { updateUserBookSchema } from "@/lib/validators/updateBook";
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const body = await req.json();
-  const id = parseInt(params.id, 10);
+  const { id } = await params;
+  const parsedId = parseInt(id, 10);
+  const placeHolderUserId = 2; // Sostituisci con l'ID dell'utente autenticato
 
-  if (Number.isNaN(id)) {
+  if (Number.isNaN(parsedId)) {
     return jsonResponse(
       {
         success: false,
@@ -34,8 +36,12 @@ export async function PATCH(
   }
 
   try {
-    const { ...updatedData } = parsedResult.data;
-    const updatedBook = await updateUserBook(id, updatedData);
+    const updatedData = parsedResult.data;
+    const updatedBook = await updateUserBook(
+      parsedId,
+      placeHolderUserId,
+      updatedData,
+    );
 
     if (!updatedBook) {
       return jsonResponse(

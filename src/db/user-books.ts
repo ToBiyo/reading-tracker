@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { sql } from "drizzle-orm";
+import { InferSelectModel, sql } from "drizzle-orm";
 import { userBooks } from "./db";
 
 type UserBookInput = {
@@ -9,9 +9,11 @@ type UserBookInput = {
   bookId: number;
 };
 
-//add book to userBookk list "reAD", "READING", "WISHLIST"
+//add book to userBookk list "READ", "READING", "WISHLIST"
 
-export const addBookToList = async (book: UserBookInput) => {
+export const addBookToList = async (
+  book: UserBookInput,
+): Promise<{ alreadyExists: boolean } | InferSelectModel<typeof userBooks>> => {
   // Check if the book is already in the user's list to prevent duplicates
   const existing = await db
     .select()
@@ -22,7 +24,7 @@ export const addBookToList = async (book: UserBookInput) => {
 
   // return the existing entry if found, otherwise create a new one
   if (existing.length) {
-    return existing[0];
+    return { alreadyExists: true };
   }
 
   const [newUserBook] = await db

@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { deleteUserBook } from "@/db/deleteUserBook";
 import { deleteBook } from "@/db/deleteBook";
-import { userBooks } from "@/db/schema";
-import { existsRecord } from "@/db/existsRecord";
+import { isBookReferencedInUserBooks } from "@/db/existsRecord";
 import { jsonResponse } from "@/lib/helpers/jsonResponseHelper";
 import { deleteUserBookSchema } from "@/lib/validators/userBookId";
 
 export async function DELETE(req: NextRequest) {
   const body = await req.json();
-
+  const placeholderUserId = 2; // TODO: Sostituire con l'ID dell'utente autenticato
   const parsedResult = deleteUserBookSchema.safeParse(body);
 
   if (!parsedResult.success) {
@@ -26,18 +25,22 @@ export async function DELETE(req: NextRequest) {
 
   try {
     // 1️⃣ Elimina il record dalla tabella userBooks
-    const deleted = await deleteUserBook(userBookId);
+    const deleted = await deleteUserBook(userBookId, placeholderUserId);
+
     if (!deleted) {
       return NextResponse.json({ error: "Record not found" }, { status: 404 });
     }
 
-    const { bookId } = deleted;
-    const exists = await existsRecord(bookId, userBooks);
+    //trasformare logica in cronological job
+
+    /*     const { bookId } = deleted;
+    const exists = await isBookReferencedInUserBooks(bookId);
 
     // 3️⃣ Se nessun altro record, elimina anche da books
     if (!exists) {
       await deleteBook(bookId);
     }
+ */
 
     return jsonResponse({ success: true, message: "Book removed" });
   } catch (error) {

@@ -31,15 +31,22 @@ export async function POST(req: NextRequest) {
     });
 
     // Add the book to the user's list and retrieve the userBook entry
-    const userBook = await addBookToList({
+    const result = await addBookToList({
       ...rest,
       bookId,
     });
 
+    if ("alreadyExists" in result) {
+      return jsonResponse({
+        success: false,
+        message: "Book already exists in the user's list",
+      });
+    }
+
     return jsonResponse({
       success: true,
       message: "Book added successfully",
-      data: userBook,
+      data: result,
     });
   } catch (error) {
     console.error("Internal server error:", error);

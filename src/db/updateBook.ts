@@ -1,5 +1,5 @@
 import { db, userBooks } from "@/db/db";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 type UpdateData = {
   rating?: number;
@@ -9,7 +9,11 @@ type UpdateData = {
 };
 
 // Elimina un record da qualsiasi tabella
-export async function updateUserBook(id: number, updateData: UpdateData) {
+export async function updateUserBook(
+  id: number,
+  userId: number,
+  updateData: UpdateData,
+) {
   // Verifica che ci sia almeno un campo da aggiornare
   if (Object.keys(updateData).length === 0) {
     throw new Error("No fields provided for update");
@@ -19,13 +23,14 @@ export async function updateUserBook(id: number, updateData: UpdateData) {
   const [existingRecord] = await db
     .select()
     .from(userBooks)
-    .where(eq(userBooks.id, id))
+    .where(and(eq(userBooks.id, id), eq(userBooks.userId, userId)))
     .limit(1);
 
   // Se il record non esiste, restituisci null o gestisci l'errore come preferisci
   if (!existingRecord) {
     return null; // Record non trovato
   }
+
   try {
     //RECUPERO I VALORI ATTUALI PER FARE LE VALIDAZIONI
     const finalCurrentPage =
@@ -41,7 +46,7 @@ export async function updateUserBook(id: number, updateData: UpdateData) {
     const [updatedRecord] = await db
       .update(userBooks)
       .set(updateData)
-      .where(eq(userBooks.id, id))
+      .where(and(eq(userBooks.id, id), eq(userBooks.userId, userId)))
       .returning();
     return updatedRecord ?? null;
   } catch (error) {

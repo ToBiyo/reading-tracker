@@ -9,8 +9,11 @@ export async function GET(req: NextRequest) {
 
   // Validate that the query parameter 'q' is provided and not empty
   if (!query) {
-    return NextResponse.json(
-      { error: "Query parameter 'q' is required" },
+    return jsonResponse(
+      {
+        success: false,
+        message: "Missing or empty search query parameter 'q'",
+      },
       { status: 400 },
     );
   }
