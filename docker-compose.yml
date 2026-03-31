@@ -1,0 +1,30 @@
+services:
+  # Container per l'app Next.js
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app              # IL PONTE: collega la cartella locale alla cartella /app del container
+      - /app/node_modules   # PROTEZIONE: impedisce al ponte di sovrascrivere i moduli installati nel container
+      - /app/.next          # Velocizza l'hot-reload isolando la cache di build
+    environment:
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+    depends_on:
+      - db
+
+  # Container per il Database Postgres
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=t${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data # PERSISTENZA: i dati restano anche se spegni tutto
+
+volumes:
+  db-data: # Crea uno spazio sicuro su disco per i dati del DB
