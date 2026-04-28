@@ -23,9 +23,9 @@ export const userBooks = pgTable(
   {
     id: serial("id").primaryKey(),
 
-    userId: integer("user_id")
+    userId: text("userId")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
 
     bookId: integer("book_id")
       .notNull()
