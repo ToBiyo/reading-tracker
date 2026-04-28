@@ -4,10 +4,22 @@ import bcrypt from "bcryptjs";
 import { existsUser } from "@/db/existsUser";
 import { addCredentialUser } from "@/db/addCredentialUser";
 import { jsonResponse } from "@/lib/helpers/jsonResponseHelper";
+import { registrationSchema } from "@/lib/validators/authCredentials";
+
 
 
 export async function POST(req: NextRequest) {
   const { name, email, password } = await req.json();
+
+  // validate the input
+  const validatedData = registrationSchema.safeParse({ name, email, password });
+
+  if (!validatedData.success) {
+    return jsonResponse({
+      success: false,
+      message: "Invalid input data",
+    }, { status: 400 });
+  }
 
   // controlla se l'utente esiste già
   const existingUser = await existsUser(email);
