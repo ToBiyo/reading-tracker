@@ -4,7 +4,7 @@ import { userBooks } from "./db";
 
 type UserBookInput = {
   coverUrl: string;
-  userId: number;
+  userId: string;
   list: "READ" | "READING" | "WISHLIST";
   bookId: number;
 };

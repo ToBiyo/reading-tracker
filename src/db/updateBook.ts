@@ -11,7 +11,7 @@ type UpdateData = {
 // Elimina un record da qualsiasi tabella
 export async function updateUserBook(
   id: number,
-  userId: number,
+  userId: string,
   updateData: UpdateData,
 ) {
   // Verifica che ci sia almeno un campo da aggiornare

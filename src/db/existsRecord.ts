@@ -1,4 +1,4 @@
-import { db, userBooks, books } from "@/db/db";
+import { db, userBooks } from "@/db/db";
 import { eq } from "drizzle-orm";
 
 // Verifica se esistono record con un certo id in qualsiasi tabella
