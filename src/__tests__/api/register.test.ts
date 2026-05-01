@@ -9,9 +9,10 @@ describe("POST /api/auth/register", () => {
     await db.delete(users);
   });
 
-  it.each(Array.from({ length: 5 }, () => createFakeUser()))(
+  it.each(Array.from({ length: 5 }))(
     "should register a new user successfully",
-    async (testUser) => {
+    async () => {
+      const testUser = createFakeUser();
       await testApiHandler({
         appHandler: handler,
         async test({ fetch }) {
@@ -28,9 +29,10 @@ describe("POST /api/auth/register", () => {
     },
   );
 
-  it.each(Array.from({ length: 5 }, () => createFakeUser()))(
+  it.each(Array.from({ length: 5 }))(
     "should return 400 if user already exists",
-    async (testUser) => {
+    async () => {
+      const testUser = createFakeUser();
       await testApiHandler({
         appHandler: handler,
         async test({ fetch }) {
@@ -62,9 +64,10 @@ describe("POST /api/auth/register", () => {
 
 
 
-    it.each(Array.from({ length: 5 }, () => createInvalidUser()))(
+    it.each(Array.from({ length: 5 }))(
     "should return 400 if data is invalid",
-    async (testUser) => {
+    async () => {
+      const testUser = createInvalidUser();
       await testApiHandler({
         appHandler: handler,
         async test({ fetch }) {
