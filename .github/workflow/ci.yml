@@ -9,6 +9,20 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpassword
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       # 1️⃣ Checkout del repo
@@ -36,6 +50,17 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      # 4️⃣ Run database migrations
+      - name: Run database migrations
+        env:
+          DATABASE_URL: postgres://testuser:testpassword@localhost:5432/testdb
+        run: npx dotenv -e .env.test npx drizzle-kit push
+
       # 5️⃣ Run tests
       - name: Run tests
+        env : 
+          DATABASE_URL: postgres://testuser:testpassword@localhost:5432/testdb
+          AUTH_SECRET: ${{ secrets.authSecret}}
+          AUTH_GOOGLE_ID: ${{ secrets.googleId }}
+          AUTH_GOOGLE_SECRET: ${{ secrets.googleSecret }}
         run: npm test

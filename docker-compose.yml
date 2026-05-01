@@ -26,5 +26,17 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data # PERSISTENZA: i dati restano anche se spegni tutto
 
+  # Container per il Database Postgres usato nei test
+  db-test:
+    image: postgres:15-alpine
+    env_file:
+      - .env.test
+    environment:
+      - POSTGRES_USER=${DB_TEST_USER}
+      - POSTGRES_PASSWORD=${DB_TEST_PASSWORD}
+      - POSTGRES_DB=${DB_TEST_NAME}
+    ports:
+      - "5433:5432"
+
 volumes:
-  db-data: # Crea uno spazio sicuro su disco per i dati del DB
+  db-data: # Crea uno spazio sicuro su disco per i dati del DBP
