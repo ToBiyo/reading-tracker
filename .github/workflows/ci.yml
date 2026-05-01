@@ -54,7 +54,7 @@ jobs:
       - name: Run database migrations
         env:
           DATABASE_URL: postgres://testuser:testpassword@localhost:5432/testdb
-        run: npx dotenv -e .env.test npx drizzle-kit push
+        run: npx drizzle-kit push
 
       # 5️⃣ Run tests
       - name: Run tests
